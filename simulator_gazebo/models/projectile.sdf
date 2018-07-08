@@ -1,0 +1,41 @@
+<?xml version='1.0'?>
+<sdf version="1.4">
+<model name="projectile">
+  <pose>0 0 0 0 0 0</pose>
+  <static>false</static>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <sphere>
+            <radius>0.25</radius>
+          </sphere>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.5</mu>
+              <mu2>0.5</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <sphere>
+            <radius>0.25</radius>
+          </sphere>
+        </geometry>
+        <!-- set box colors (search on sdf site)-->
+        <material>
+          <ambient>0 1 0 0</ambient>
+          <diffuse>0 0 0 1</diffuse>
+          <specular>1 0.1 0.1 1</specular>
+          <emissive>0 0 0 0</emissive>
+        </material>
+      </visual>
+      <plugin name="launch_projectile" filename="liblaunch_projectile.so">
+        <velocity>2</velocity>
+      </plugin>
+    </link>
+  </model>
+</sdf>

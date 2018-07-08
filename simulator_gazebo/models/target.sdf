@@ -1,0 +1,41 @@
+<?xml version='1.0'?>
+<sdf version="1.4">
+<model name="target">
+  <pose>0 0 0 0 0 0</pose>
+  <static>false</static>
+    <link name="link">
+      <gravity>0</gravity>
+      <collision name="collision">
+        <geometry>
+          <sphere>
+            <radius>0.5</radius>
+          </sphere>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.5</mu>
+              <mu2>0.5</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <sphere>
+            <radius>0.5</radius>
+          </sphere>
+        </geometry>
+        <!-- set box colors (search on sdf site)-->
+        <material>
+          <ambient>1 0 0 1</ambient>
+          <diffuse>1 0 0 1</diffuse>
+          <specular>1 0.1 0.1 1</specular>
+          <emissive>0 0 0 0</emissive>
+        </material>
+      </visual>
+
+    </link>
+    <plugin name="set_target_movement" filename="libtarget_movement.so"/>
+  </model>
+</sdf>

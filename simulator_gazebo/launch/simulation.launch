@@ -1,0 +1,51 @@
+<?xml version='1.0' ?>
+<launch>
+  <env name="GAZEBO_PLUGIN_PATH" value="/home/marius/Desktop/licenta2_ws/devel/lib"/>
+  <env name="GAZEBO_MODEL_PATH" value="$(find simulator_gazebo)/models"/>
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+  	<arg name="world_name"   value="$(find simulator_gazebo)/worlds/launcher.world"/>
+  	<arg name="paused"       value="false"/>
+  	<arg name="use_sim_time" value="true"/>
+  	<arg name="gui"          value="true"/>
+  	<arg name="recording"    value="false"/>
+  	<arg name="debug"        value="false"/>
+  </include>
+
+  <include file="$(find simulator_gazebo)/launch/spawn_camera_module.launch">
+    <arg name="node_name"  value="spawn_camera0"/>
+    <arg name="model_name" value="camera0"/>
+    <arg name="pos_x"      value="5"/>
+    <arg name="pos_y"      value="0"/>
+    <arg name="pos_z"      value="2"/>
+    <arg name="roll"       value="0.0"/>
+    <arg name="pitch"      value="-0.52359877559"/>
+    <arg name="yaw"        value="0.67513153279"/> <!-- pi/2 - atan(sqrt(8^2-5^2)/5)-->
+    <arg name="namespace"  value="camera0"/>
+  </include>
+
+  <include file="$(find simulator_gazebo)/launch/spawn_camera_module.launch">
+    <arg name="node_name"  value="spawn_camera1"/>
+    <arg name="model_name" value="camera1"/>
+    <arg name="pos_x"      value="0"/>
+    <arg name="pos_y"      value="30"/>
+    <arg name="pos_z"      value="2"/>
+    <arg name="roll"       value="0.0"/>
+    <arg name="pitch"      value="-0.52359877559"/>
+    <arg name="yaw"        value="0.0"/>
+    <arg name="namespace"  value="camera1"/>
+  </include>
+
+  <include file="$(find simulator_gazebo)/launch/spawn_camera_module.launch">
+    <arg name="node_name"  value="spawn_camera2"/>
+    <arg name="model_name" value="camera2"/>
+    <arg name="pos_x"      value="38"/>
+    <arg name="pos_y"      value="0"/>
+    <arg name="pos_z"      value="2"/>
+    <arg name="roll"       value="0.0"/>
+    <arg name="pitch"      value="-0.52359877559"/>
+    <arg name="yaw"        value="1.57079632679"/>
+    <arg name="namespace"  value="camera2"/>
+  </include>
+
+</launch>

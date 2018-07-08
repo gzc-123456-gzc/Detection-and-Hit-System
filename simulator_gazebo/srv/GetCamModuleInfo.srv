@@ -1,0 +1,3 @@
+bool get_data
+---
+simulator_gazebo/CamModuleInfo[] module_info
