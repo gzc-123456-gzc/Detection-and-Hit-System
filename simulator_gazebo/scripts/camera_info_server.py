@@ -18,16 +18,16 @@ def main():
     rospy.wait_for_service("gazebo/get_link_state")
 
     # create service proxy for both services
-    getModelState = rospy.ServiceProxy("gazebo/get_model_state", GetModelState)
-    getLinkState  = rospy.ServiceProxy("gazebo/get_link_state", GetLinkState)
+    get_model_state = rospy.ServiceProxy("gazebo/get_model_state", GetModelState)
+    get_link_state  = rospy.ServiceProxy("gazebo/get_link_state", GetLinkState)
 
     # the base string for model names
-    baseName  = "camera"
-    indexName = 0
+    base_name  = "camera"
+    index_name = 0
 
     # create model name and call get model state service
-    modelName  = baseName + str(indexName)
-    modelState = getModelState(modelName, "")
+    model_name  = base_name + str(index_name)
+    model_state = get_model_state(model_name, "")
 
     # save data for each camera module in an array of classes
     dictData = []
@@ -39,26 +39,27 @@ def main():
         data = CamModuleInfo()
 
         # write model name and pose
-        data.model_name = modelName
-        data.pose = modelState.pose
+        data.model_name = model_name
+        data.pose = model_state.pose
 
         # get link state of the left link to get distance between cams
-        leftLinkState  = getLinkState(modelName + "::left", modelName)
-        rightLinkState = getLinkState(modelName + "::right", modelName)
+        leftLinkState  = get_link_state(model_name + "::left", model_name)
+        rightLinkState = get_link_state(model_name + "::right", model_name)
         if leftLinkState.success and rightLinkState.success:
+            # distance between cameras is given by the difference between y pos of each camera
+            # different pose for camera module is given by rotating and translating
             data.dist_cameras = abs(leftLinkState.link_state.pose.position.y -
                                    rightLinkState.link_state.pose.position.y)
 
         # create object instance for subcriber class
-        dataSub = CameraInfoSub(modelName)
-
+        dataSub = CameraInfoSub(model_name)
         # subscribed to camera info topic; wait until one message has arrived
         # in order to get focal length and resolution data
-        while not dataSub.subDone:
+        while not dataSub.sub_done:
             pass
 
         # after a message has arrived, transfer the data to camera module instance
-        data.focal_length = dataSub.focalLength
+        data.focal_length = dataSub.focal_length
         data.height       = dataSub.height
         data.width        = dataSub.width
 
@@ -66,9 +67,9 @@ def main():
         dictData.append(data)
 
         # after appending message to the array, update model name and get new model state
-        indexName += 1
-        modelName  = baseName + str(indexName)
-        modelState = getModelState(modelName, "")
+        index_name += 1
+        model_name  = base_name + str(index_name)
+        model_state = getModelState(model_name, "")
 
     def callbackSrvReq(req):
         return GetCamModuleInfoResponse(dictData)
