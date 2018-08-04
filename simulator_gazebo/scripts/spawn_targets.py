@@ -2,12 +2,12 @@
 
 import random
 import rospy
-import os
 
-from geometry_msgs.msg    import Pose, Point
+from geometry_msgs.msg import Pose, Point
 from simulator_gazebo.msg import TargetSpawn
+
 from simulator_gazebo.srv import SetVelocity, SetVelocityRequest
-from gazebo_msgs.srv      import SpawnModel, DeleteModel
+from gazebo_msgs.srv import SpawnModel, DeleteModel
 
 
 # parameters needed by spawn model service
@@ -17,28 +17,28 @@ _base_name = "target"
 # path to SDF file for the model
 _model_path = "/home/marius/Desktop/licenta2_ws/src/simulator_gazebo/models/target.sdf"
 # upload the xml file
-_file = open(_model_path,'r')
+_file = open(_model_path, 'r')
 _model_xml = _file.read()
 _file.close()
 # the namespace will be the inertial frame (world frame)
 _robot_namespace = ""
 # initial pose of the spawned model
 _init_pose = Pose()
-_init_pose.position = Point(0,0,0)
+_init_pose.position = Point(0, 0, 0)
 # the model will be spawned at the pose given by init_pose with reference to reference_frame
 _reference_frame = "world"
 # ---------------------------------------
 
 # parameters for spawning time interval
 # ---------------------------------------
-_spawn_interval  = 10
+_spawn_interval = 10
 _delete_interval = 20
 # ---------------------------------------
 
 # parameters for publisher; create publisher; publish once a new target is spawned
 # ---------------------------------------
 _publish_topic = "/simulator_gazebo/set_target_movement"
-_movement_publisher = rospy.Publisher(_publish_topic, TargetSpawn, queue_size = 1)
+_movement_publisher = rospy.Publisher(_publish_topic, TargetSpawn, queue_size=1)
 # set velocity range
 _vel_x_min = 0
 _vel_x_max = 3
@@ -48,6 +48,7 @@ _vel_z_min = 1
 _vel_z_max = 3
 
 # ---------------------------------------
+
 
 def main():
 
@@ -59,13 +60,11 @@ def main():
     rospy.wait_for_service("gazebo/delete_model")
 
     # create service proxy for spawn model and delete model
-    spawn_model  = rospy.ServiceProxy("gazebo/spawn_sdf_model", SpawnModel)
+    spawn_model = rospy.ServiceProxy("gazebo/spawn_sdf_model", SpawnModel)
     delete_model = rospy.ServiceProxy("gazebo/delete_model", DeleteModel)
 
-
-
     # start initial spawn time; initialize target index to 0
-    start_spawn  = 0
+    start_spawn = 0
     target_index = 0
     # delete initial spawn time;
     start_delete = rospy.get_rostime().secs
@@ -73,8 +72,8 @@ def main():
     # set loop rate
     once = False
     loop_rate = rospy.Rate(1000)
-    while not rospy.is_shutdown():
 
+    while not rospy.is_shutdown():
         # check numbers of seconds since the last spawn
         if (rospy.get_rostime().secs - start_spawn) > _spawn_interval:
             # modify model_name and init_pose; generate random initial position
@@ -87,7 +86,7 @@ def main():
             vel_x = random.randint(_vel_x_min, _vel_x_max)
             vel_y = random.randint(_vel_y_min, _vel_y_max)
             vel_z = random.randint(_vel_z_min, _vel_z_max)
-            velocity = Point(vel_x,vel_y,vel_z)
+            velocity = Point(vel_x, vel_y, vel_z)
 
             # create service proxy for SetVelocity server used for target plugin;
             set_vel = rospy.ServiceProxy(model_name + "/set_velocity", SetVelocity)
