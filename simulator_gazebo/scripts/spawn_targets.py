@@ -50,7 +50,7 @@ _vel_z_max = 3
 # ---------------------------------------
 
 
-def main():
+def spawn_targets():
 
     # initialize ROS node
     rospy.init_node("spawn_targets")
@@ -110,4 +110,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    spawn_targets()

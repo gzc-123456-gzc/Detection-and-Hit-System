@@ -192,7 +192,7 @@ target_link_libraries(target_movement ${GAZEBO_LIBRARIES})
 #add_library(model_push SHARED ./plugins/model_push/model_push.cc)
 #target_link_libraries(model_push ${GAZEBO_LIBRARIES})
 
-#add_library(launch_projectile SHARED ./plugins/launch_projectile/launch_projectile.cc)
-#target_link_libraries(launch_projectile ${GAZEBO_LIBRARIES})
+add_library(launch_projectile SHARED ./plugins/launch_projectile/launch_projectile.cc)
+target_link_libraries(launch_projectile ${GAZEBO_LIBRARIES})
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)

@@ -5,10 +5,14 @@
 #include <gazebo/transport/transport.hh>
 #include <gazebo/msgs/msgs.hh>
 #include <ignition/math/Vector3.hh>
+#include <thread>
 #include "ros/ros.h"
 #include "ros/callback_queue.h"
 #include "ros/subscribe_options.h"
+#include "ros/advertise_service_options.h"
+#include "ros/node_handle.h"
 #include "std_msgs/Float32.h"
+#include "std_srvs/Empty.h"
 #include "geometry_msgs/Point.h"
 
 namespace gazebo
@@ -18,7 +22,7 @@ namespace gazebo
     public: LaunchProjectile() : ModelPlugin()
     {
       printf("Loaded launch projectile plugin. \n");
-      this->topicName = "/launcher_gazebo/set_projectile_vel";
+      this->topicName = "/set_projectile_vel";
     }
     public: void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
     {
@@ -31,8 +35,12 @@ namespace gazebo
       // check if tag <velocity> exists in sdf file
       if(_sdf->HasElement("velocity"))
         velocity = _sdf->Get<double>("velocity");
+      // get topic name
+      if(_sdf->HasElement("topicName"))
+        this->topicName = _sdf->Get<std::string>("topicName");
 
       this->link = this->model->GetLink("link");
+      this->link->SetLinearVel(ignition::math::Vector3d(0,0,0));
       //this->updateConnection = event::Events::ConnectWorldUpdateBegin(
         //  std::bind(&LaunchProjectile::OnUpdate, this));
 
@@ -53,21 +61,19 @@ namespace gazebo
             &this->rosQueue);
       this->rosSub = this->rosNode->subscribe(so);
       // Spin up the queue helper thread. equivalent to rospy.spin()
-      this->rosQueueThread = boost::thread(std::bind(&LaunchProjectile::QueueThread, this));
+      this->rosQueueThread = std::thread(std::bind(&LaunchProjectile::QueueThread, this));
 
     }
 
     // Called by the ros msg event
     public: void OnMsg(const geometry_msgs::PointConstPtr &_vel_cmd)
     {
-
-      this->link->SetLinearVel(ignition::math::Vector3d(0,0,0));
       if(!this->isShot)
       {
         this->isShot = true;
-        this->link->SetLinearVel(ignition::math::Vector3d(_vel_cmd->x,_vel_cmd->y,_vel_cmd->z));
+        this->model->SetLinearVel(ignition::math::Vector3d(_vel_cmd->x,_vel_cmd->y,_vel_cmd->z));
       }
-      printf("Subscriber works. \n");
+      printf("Received launch command. \n");
     }
 
     private: void QueueThread()
@@ -75,10 +81,16 @@ namespace gazebo
       static const double timeout = 0.01;
       while (this->rosNode->ok())
       {
-        this->rosQueue.callAvailable(ros::WallDuration(timeout));
+      if(this->isShot)
+      {
+        // detach thread for safe delete of the model; break the loop
+        this->rosQueueThread.detach();
+        break;
+      }
+      this->rosQueue.callAvailable(ros::WallDuration(timeout));
       }
     }
-    // variable
+    // variable storing state of the projectile: shot or not
     private: bool isShot = false;
     // Pointer to the model
     private: physics::ModelPtr model;
@@ -91,7 +103,7 @@ namespace gazebo
     private: ros::Subscriber rosSub;
     private: ros::CallbackQueue rosQueue;
     /// \brief A thread the keeps running the rosQueue
-    private: boost::thread rosQueueThread;
+    private: std::thread rosQueueThread;
 
     private: std::string topicName;
   };

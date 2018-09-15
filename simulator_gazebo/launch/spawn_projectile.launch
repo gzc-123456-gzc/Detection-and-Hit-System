@@ -1,0 +1,20 @@
+<?xml version='1.0' ?>
+<!-- default args, overwritten by caller -->
+<launch>
+  <arg name="node_name"  default="spawn_projectile"/>
+  <arg name="model_name" default="projectile"/>
+  <arg name="pos_x"      default="0.0"/>
+  <arg name="pos_y"      default="0.0"/>
+  <arg name="pos_z"      default="0.0"/>
+  <arg name="namespace"  default=""/>
+
+  <node name="$(arg node_name)" pkg="gazebo_ros" type="spawn_model"
+        args="-file $(find simulator_gazebo)/models/projectile.sdf
+              -sdf
+              -x $(arg pos_x)
+              -y $(arg pos_y)
+              -z $(arg pos_z)
+              -model $(arg model_name)
+              -robot_namespace $(arg namespace)">
+  </node>
+</launch>

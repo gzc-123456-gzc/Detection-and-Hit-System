@@ -4,10 +4,11 @@
   <pose>0 0 0 0 0 0</pose>
   <static>false</static>
     <link name="link">
+    <gravity>1</gravity>
       <collision name="collision">
         <geometry>
           <sphere>
-            <radius>0.25</radius>
+            <radius>0.3</radius>
           </sphere>
         </geometry>
         <surface>
@@ -22,20 +23,21 @@
       <visual name="visual">
         <geometry>
           <sphere>
-            <radius>0.25</radius>
+            <radius>0.3</radius>
           </sphere>
         </geometry>
         <!-- set box colors (search on sdf site)-->
         <material>
           <ambient>0 1 0 0</ambient>
-          <diffuse>0 0 0 1</diffuse>
+          <diffuse>0 1 0 1</diffuse>
           <specular>1 0.1 0.1 1</specular>
           <emissive>0 0 0 0</emissive>
         </material>
       </visual>
-      <plugin name="launch_projectile" filename="liblaunch_projectile.so">
-        <velocity>2</velocity>
-      </plugin>
     </link>
+
+  <plugin name="launch_projectile" filename="liblaunch_projectile.so">
+    <topicName>set_projectile_vel<topicName/>
+  </plugin>
   </model>
 </sdf>

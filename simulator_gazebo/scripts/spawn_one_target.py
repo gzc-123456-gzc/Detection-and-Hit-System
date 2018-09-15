@@ -6,12 +6,16 @@ import argparse
 from geometry_msgs.msg import Pose, Point
 
 from simulator_gazebo.srv import SetVelocity, SetVelocityRequest
-from gazebo_msgs.srv import SpawnModel, DeleteModel
+from gazebo_msgs.srv import SpawnModel
 
 # create parser for command line arguments
 parser = argparse.ArgumentParser(description="Set target velocity.")
-
-
+parser.add_argument("vel", metavar="VEL", type=float, nargs="*",
+                    help="velocity list [x,y,z]")
+parser.add_argument("target_index", metavar="INDEX", type=int, nargs="+",
+                    help="target index")
+args = parser.parse_args()
+print args
 # parameters needed by spawn model service
 # ---------------------------------------
 # name of the model to be spawned must be unique in the simulation
@@ -33,7 +37,8 @@ _reference_frame = "world"
 # ---------------------------------------
 
 
-def main():
+def spawn_one_target():
+    global args
     # initialize ROS node
     rospy.init_node("spawn_targets")
 
@@ -42,7 +47,7 @@ def main():
     # create service proxy for spawn model and delete model
     spawn_model = rospy.ServiceProxy("gazebo/spawn_sdf_model", SpawnModel)
 
-    target_index = 0
+    target_index = args.target_index[0]
     # modify model_name and init_pose; generate random initial position
     model_name = _base_name + str(target_index)
     # spawn model
@@ -50,9 +55,9 @@ def main():
     rospy.sleep(0.5)
 
     # generate velocity>
-    vel_x = 1.5
-    vel_y = 1
-    vel_z = 0.5
+    vel_x = args.vel[0]
+    vel_y = args.vel[1]
+    vel_z = args.vel[2]
     velocity = Point(vel_x, vel_y, vel_z)
 
     # create service proxy for SetVelocity server used for target plugin;
@@ -62,4 +67,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    spawn_one_target()

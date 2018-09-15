@@ -24,6 +24,14 @@
     <arg name="namespace"  value="camera0"/>
   </include>
 
+  <include file="$(find simulator_gazebo)/launch/spawn_projectile.launch">
+    <arg name="node_name"  value="spawn_projectile"/>
+    <arg name="model_name" value="projectile"/>
+    <arg name="pos_x"      value="2"/>
+    <arg name="pos_y"      value="2"/>
+    <arg name="pos_z"      value="0"/>
+  </include>
+<!--
   <include file="$(find simulator_gazebo)/launch/spawn_camera_module.launch">
     <arg name="node_name"  value="spawn_camera1"/>
     <arg name="model_name" value="camera1"/>
@@ -47,5 +55,5 @@
     <arg name="yaw"        value="1.57079632679"/>
     <arg name="namespace"  value="camera2"/>
   </include>
-
+-->
 </launch>
